@@ -1,0 +1,1161 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0A7A54">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>:root{color-scheme:light;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>Carnet Boutique</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: une colonne étroite pour le téléphone. Gros total "À encaisser" en tête, liste dessous,
+   bouton flottant "Nouvelle vente" et barre de navigation fixe en bas (Ventes, Clients, Bilan, Réglages). */
+:root {
+  --font-display: "Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
+  --font-body: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --bg: #F1F5F2;
+  --surface: #FFFFFF;
+  --ink: #12201B;
+  --muted: #566861;
+  --line: #D9E3DE;
+  --accent: #0A7A54;
+  --accent-ink: #FFFFFF;
+  --accent-soft: #DCF0E6;
+  --warn: #B4400C;
+  --warn-soft: #FBE5D8;
+  --amber: #7F5400;
+  --amber-soft: #FAEDCB;
+  --shadow: 0 1px 2px rgba(18, 32, 27, .06), 0 10px 28px rgba(18, 32, 27, .07);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0E1613; --surface: #16211D; --ink: #E7F0EC; --muted: #93A59D; --line: #26342E;
+    --accent: #3DD29A; --accent-ink: #06261A; --accent-soft: #12372A;
+    --warn: #FF9B6B; --warn-soft: #3A2218; --amber: #F2C45C; --amber-soft: #35290E;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 10px 28px rgba(0, 0, 0, .35);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0E1613; --surface: #16211D; --ink: #E7F0EC; --muted: #93A59D; --line: #26342E;
+  --accent: #3DD29A; --accent-ink: #06261A; --accent-soft: #12372A;
+  --warn: #FF9B6B; --warn-soft: #3A2218; --amber: #F2C45C; --amber-soft: #35290E;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 10px 28px rgba(0, 0, 0, .35);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font-family: var(--font-body); font-size: 15px; line-height: 1.45;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 0;
+}
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.wrap { max-width: 560px; margin: 0 auto; padding-block: 20px 170px; display: flex; flex-direction: column; gap: 18px; }
+
+/* En-tête */
+.top { display: flex; flex-direction: column; gap: 2px; }
+.toprow { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.eyebrow { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+input.shop[type="text"], div.shop {
+  width: 100%; border: 0; border-bottom: 2px dashed transparent; border-radius: 0; background: transparent; min-height: 0;
+  font-family: var(--font-display); font-weight: 700; font-size: 1.5rem; line-height: 1.3; padding: 2px 0; color: var(--ink);
+}
+input.shop[type="text"]::placeholder { color: var(--muted); }
+input.shop[type="text"]:hover, input.shop[type="text"]:focus { border-bottom-color: var(--line); outline: none; }
+input.shop[type="text"]:focus-visible { border-bottom-color: var(--accent); }
+.chip { border: 1px solid var(--line); background: var(--surface); border-radius: 99px; padding: 5px 11px; font-size: 12.5px; font-weight: 700; white-space: nowrap; color: var(--muted); min-height: 32px; }
+.chip.pro { background: var(--accent-soft); border-color: transparent; color: var(--accent); }
+.chip.exp { background: var(--warn-soft); border-color: transparent; color: var(--warn); }
+
+/* Total */
+.hero { background: var(--accent); color: var(--accent-ink); border-radius: 22px; padding: 20px 20px 18px; box-shadow: var(--shadow); }
+.hero .label { font-size: 13px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; opacity: .85; }
+.hero .big { font-family: var(--font-display); font-weight: 700; font-size: clamp(2.3rem, 11vw, 3.3rem); line-height: 1.05; margin-top: 4px; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.hero .big small { font-size: .45em; font-weight: 600; margin-left: 6px; opacity: .85; }
+.hero .sub { margin-top: 8px; font-size: 14px; opacity: .92; }
+.stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; padding-top: 14px; border-top: 1px solid color-mix(in srgb, var(--accent-ink) 28%, transparent); }
+.stat .k { font-size: 12px; opacity: .8; }
+.stat .v { font-family: var(--font-display); font-weight: 600; font-size: 1.1rem; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+
+/* Onglets de filtre */
+.tabs { display: flex; gap: 6px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 4px; }
+.tab { flex: 1; border: 0; background: transparent; border-radius: 10px; padding: 9px 6px; font-weight: 600; color: var(--muted); min-width: 0; }
+.tab[aria-selected="true"] { background: var(--accent-soft); color: var(--accent); }
+.tab .n { font-variant-numeric: tabular-nums; margin-left: 4px; opacity: .8; }
+
+/* Listes et cartes */
+.list { display: flex; flex-direction: column; gap: 12px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 14px 14px 12px; display: flex; flex-direction: column; gap: 10px; }
+.row { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.row > * { min-width: 0; }
+.who { font-weight: 700; font-size: 1.02rem; overflow-wrap: anywhere; }
+.what { color: var(--muted); font-size: 14px; overflow-wrap: anywhere; }
+.rest { text-align: right; flex-shrink: 0; }
+.rest .amt { font-family: var(--font-display); font-weight: 700; font-size: 1.3rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.rest .cap { font-size: 12px; color: var(--muted); }
+.bar-track { height: 8px; background: var(--line); border-radius: 99px; overflow: hidden; }
+.bar-fill { height: 100%; background: var(--accent); border-radius: 99px; }
+.meta { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.pill { display: inline-block; padding: 2px 9px; border-radius: 99px; font-size: 12px; font-weight: 700; }
+.pill.late { background: var(--warn-soft); color: var(--warn); }
+.pill.soon { background: var(--amber-soft); color: var(--amber); }
+.pill.ok { background: var(--accent-soft); color: var(--accent); }
+.pill.ex { background: var(--line); color: var(--muted); }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.btn { border: 1px solid var(--line); background: var(--surface); border-radius: 12px; padding: 9px 13px; font-weight: 600; font-size: 14px; text-decoration: none; color: var(--ink); display: inline-flex; align-items: center; justify-content: center; min-height: 40px; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn.wa { border-color: var(--accent); color: var(--accent); }
+.btn.ghost { border-color: transparent; color: var(--muted); padding-inline: 8px; }
+.btn.danger { color: var(--warn); border-color: var(--warn); }
+.btn.block { width: 100%; }
+.spacer { flex: 1; }
+.panel { background: var(--bg); border-radius: 12px; padding: 10px; display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-end; }
+.panel .field { flex: 1 1 130px; }
+details.hist { font-size: 13px; color: var(--muted); }
+details.hist summary { cursor: pointer; font-weight: 600; min-height: 28px; display: flex; align-items: center; }
+.hist-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 4px 0; border-top: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+.hist-row > span { min-width: 0; overflow-wrap: anywhere; }
+
+/* Champs */
+.field { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.field label { font-size: 13px; font-weight: 600; }
+.field .hint { font-size: 12px; color: var(--muted); }
+.field .err { font-size: 12px; color: var(--warn); font-weight: 600; }
+input[type="text"], input[type="tel"], input[type="date"], input[type="search"], select, textarea {
+  width: 100%; min-height: 44px; padding: 9px 12px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface);
+}
+textarea { min-height: 96px; resize: vertical; }
+input[aria-invalid="true"] { border-color: var(--warn); }
+.amt-input, .code-input { font-variant-numeric: tabular-nums; }
+.code-input { letter-spacing: .12em; text-transform: uppercase; font-weight: 700; }
+
+/* États vides, notes, bandeaux */
+.empty { background: var(--surface); border: 1px dashed var(--line); border-radius: 18px; padding: 18px; display: flex; flex-direction: column; gap: 10px; }
+.empty h2 { margin: 0; font-family: var(--font-display); font-size: 1.15rem; text-wrap: balance; }
+.empty p { margin: 0; color: var(--muted); }
+.note { font-size: 12.5px; color: var(--muted); text-align: center; margin: 0; }
+.banner { background: var(--amber-soft); color: var(--amber); border-radius: 14px; padding: 10px 12px; font-size: 13.5px; font-weight: 600; display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+
+/* Réglages */
+.sect { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+.sect h2 { margin: 0; font-family: var(--font-display); font-size: 1.1rem; }
+.sect p { margin: 0; color: var(--muted); font-size: 14px; }
+.sect ol { margin: 0; padding-left: 20px; color: var(--ink); font-size: 14px; display: flex; flex-direction: column; gap: 4px; }
+.kv { display: flex; justify-content: space-between; gap: 12px; font-size: 14px; }
+.kv b { font-variant-numeric: tabular-nums; text-align: right; overflow-wrap: anywhere; }
+.cid { font-family: var(--font-display); font-weight: 700; font-size: 1.5rem; letter-spacing: .1em; }
+
+/* Bilan */
+.cols { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 380px) { .cols { grid-template-columns: 1fr; } }
+.kpi { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 12px 14px; min-width: 0; }
+.kpi .k { font-size: 12px; color: var(--muted); font-weight: 600; }
+.kpi .v { font-family: var(--font-display); font-weight: 700; font-size: 1.15rem; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.chart-wrap { overflow-x: auto; }
+.chart-wrap svg { display: block; width: 100%; min-width: 300px; height: auto; }
+.ax { fill: var(--muted); font-size: 9px; font-family: var(--font-body); }
+.legend { display: flex; gap: 14px; font-size: 12.5px; color: var(--muted); flex-wrap: wrap; }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+.mrow { display: flex; flex-direction: column; gap: 4px; }
+.mrow .t { display: flex; justify-content: space-between; gap: 10px; font-size: 14px; font-variant-numeric: tabular-nums; }
+
+/* Navigation et bouton flottant */
+.nav { position: fixed; left: 0; right: 0; bottom: 0; background: var(--surface); border-top: 1px solid var(--line); display: flex; justify-content: center; z-index: 10;
+  padding: 6px max(8px, env(safe-area-inset-right, 0px)) calc(6px + env(safe-area-inset-bottom, 0px)) max(8px, env(safe-area-inset-left, 0px)); }
+.nav-in { display: flex; width: 100%; max-width: 560px; gap: 4px; }
+.nav button { flex: 1; border: 0; background: transparent; border-radius: 12px; padding: 6px 4px; display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 12px; font-weight: 600; color: var(--muted); min-height: 52px; }
+.nav button[aria-current="page"] { color: var(--accent); background: var(--accent-soft); }
+.nav svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.fab { position: fixed; z-index: 9; right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(76px + env(safe-area-inset-bottom, 0px));
+  border: 0; border-radius: 99px; background: var(--accent); color: var(--accent-ink); font-family: var(--font-display); font-weight: 700; font-size: 16px;
+  padding: 0 20px; min-height: 52px; box-shadow: var(--shadow); display: inline-flex; align-items: center; gap: 8px; }
+.fab svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; }
+
+/* Feuille de saisie */
+.overlay { position: fixed; inset: 0; background: rgba(8, 14, 12, .55); display: flex; align-items: flex-end; justify-content: center; z-index: 20; }
+.sheet { background: var(--bg); width: 100%; max-width: 560px; max-height: 94%; overflow-y: auto; border-radius: 22px 22px 0 0;
+  padding: 18px max(16px, env(safe-area-inset-right, 0px)) calc(18px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
+  display: flex; flex-direction: column; gap: 14px; }
+.sheet h2 { margin: 0; font-family: var(--font-display); font-size: 1.3rem; }
+.sheet p { margin: 0; color: var(--muted); font-size: 14px; }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 420px) { .two { grid-template-columns: 1fr; } }
+.plan { display: flex; align-items: center; gap: 10px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 10px 12px; min-height: 48px; cursor: pointer; }
+.plan input { width: 20px; height: 20px; accent-color: var(--accent); flex: none; }
+.plan .pn { flex: 1; font-weight: 600; min-width: 0; }
+.plan .pp { font-variant-numeric: tabular-nums; font-weight: 700; white-space: nowrap; }
+.plan:has(input:checked) { border-color: var(--accent); background: var(--accent-soft); }
+.toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(138px + env(safe-area-inset-bottom, 0px)); background: var(--ink); color: var(--bg);
+  padding: 10px 16px; border-radius: 12px; font-weight: 600; font-size: 14px; max-width: min(92vw, 520px); z-index: 30; box-shadow: var(--shadow); }
+@media (prefers-reduced-motion: no-preference) {
+  .bar-fill { transition: width .35s ease; }
+  .toast { animation: rise .2s ease-out; }
+  @keyframes rise { from { opacity: 0; transform: translate(-50%, 8px); } to { opacity: 1; transform: translate(-50%, 0); } }
+}
+</style>
+
+<div class="wrap" id="app"></div>
+<button class="fab" id="fab" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Nouvelle vente</button>
+<nav class="nav" id="nav" aria-label="Navigation principale"></nav>
+<div class="overlay" id="overlay" hidden></div>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<script>
+/*LICENSE-START*/
+const License = (() => {
+  const SECRET = 'af9WHbt8nRghvYbXNMyIoqN2ehq6RdRe';
+  // 31 caractères sans 0, 1, O, I, L pour éviter les confusions à la lecture.
+  const ALPH = '23456789ABCDEFGHJKMNPQRSTUVWXYZ';
+  const B = ALPH.length;
+  function h53(str, seed) {
+    let h1 = 0xdeadbeef ^ seed, h2 = 0x41c6ce57 ^ seed;
+    for (let i = 0, ch; i < str.length; i++) {
+      ch = str.charCodeAt(i);
+      h1 = Math.imul(h1 ^ ch, 2654435761);
+      h2 = Math.imul(h2 ^ ch, 1597334677);
+    }
+    h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+    h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+    return 4294967296 * (2097151 & h2) + (h1 >>> 0);
+  }
+  const clean = s => String(s == null ? '' : s).toUpperCase().replace(/[^A-Z0-9]/g, '');
+  function rand(n) {
+    let out = '';
+    const buf = new Uint32Array(n);
+    try { crypto.getRandomValues(buf); } catch (e) { for (let i = 0; i < n; i++) buf[i] = Math.floor(Math.random() * 4294967296); }
+    for (let i = 0; i < n; i++) out += ALPH[buf[i] % B];
+    return out;
+  }
+  function mac(id, months, serial) {
+    let n = h53(id + '|' + months + '|' + serial + '|' + SECRET, 7);
+    let s = '';
+    for (let i = 0; i < 7; i++) { s += ALPH[n % B]; n = Math.floor(n / B); }
+    return s;
+  }
+  const group = c => c.match(/.{1,4}/g).join('-');
+  // Code = 1 caractère (mois) + 4 (numéro de série) + 7 (signature) = 12 caractères.
+  function make(clientId, months, serial) {
+    const id = clean(clientId);
+    const sr = serial || rand(4);
+    return group(ALPH[months] + sr + mac(id, months, sr));
+  }
+  function check(code, clientId) {
+    const c = clean(code), id = clean(clientId);
+    if (c.length !== 12) return { ok: false, reason: 'format' };
+    for (const ch of c) if (ALPH.indexOf(ch) < 0) return { ok: false, reason: 'format' };
+    const months = ALPH.indexOf(c[0]);
+    if (months < 1 || months > 12) return { ok: false, reason: 'format' };
+    const serial = c.slice(1, 5);
+    if (mac(id, months, serial) !== c.slice(5)) return { ok: false, reason: 'invalid' };
+    return { ok: true, months, serial };
+  }
+  const newClientId = () => rand(6);
+  const validClientId = s => { const c = clean(s); return c.length === 6 && [...c].every(ch => ALPH.indexOf(ch) >= 0); };
+  const fmtClientId = s => { const c = clean(s); return c.length === 6 ? c.slice(0, 3) + '-' + c.slice(3) : c; };
+  return { make, check, clean, newClientId, validClientId, fmtClientId };
+})();
+/*LICENSE-END*/
+
+/*LOGIC-START*/
+const Logic = (() => {
+  const nf = new Intl.NumberFormat('fr-FR');
+  const fmt = n => nf.format(Math.round(n || 0)).replace(/[  ]/g, ' ');
+  const money = n => fmt(n) + ' FCFA';
+  const toInt = s => { const d = String(s == null ? '' : s).replace(/[^\d]/g, ''); return d ? parseInt(d, 10) : 0; };
+  const MONTHS = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'];
+
+  // Numéro WhatsApp au format international sans "+". Bénin par défaut (indicatif 229, numéros à 10 chiffres commençant par 01).
+  function normPhone(raw) {
+    const s = String(raw || '').trim();
+    if (!s) return '';
+    let d = s.replace(/\D/g, '');
+    if (!d) return '';
+    if (s.startsWith('+')) return d.length >= 11 && d.length <= 15 ? d : '';
+    if (d.startsWith('00')) { d = d.slice(2); return d.length >= 11 && d.length <= 15 ? d : ''; }
+    if (d.length === 8) return '22901' + d;
+    if (d.length === 10 && d.startsWith('01')) return '229' + d;
+    if (d.length === 13 && d.startsWith('229')) return d;
+    return '';
+  }
+  function prettyPhone(raw) {
+    const p = normPhone(raw);
+    if (p.length === 13 && p.startsWith('229')) return p.slice(3).replace(/(\d{2})(?=\d)/g, '$1 ');
+    return p ? '+' + p : String(raw || '');
+  }
+
+  const pad = n => String(n).padStart(2, '0');
+  const todayStr = (d = new Date()) => d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+  const dayNum = s => { const [y, m, d] = s.split('-').map(Number); return Math.round(Date.UTC(y, m - 1, d) / 86400000); };
+  const daysUntil = (due, today) => dayNum(due) - dayNum(today);
+  const fmtDate = s => { if (!s) return ''; const [y, m, d] = s.split('-'); return d + '/' + m + '/' + y; };
+  function addMonths(s, m) {
+    const [y, mo, d] = s.split('-').map(Number);
+    const t = new Date(Date.UTC(y, mo - 1 + m, 1));
+    const last = new Date(Date.UTC(t.getUTCFullYear(), t.getUTCMonth() + 1, 0)).getUTCDate();
+    t.setUTCDate(Math.min(d, last));
+    return t.getUTCFullYear() + '-' + pad(t.getUTCMonth() + 1) + '-' + pad(t.getUTCDate());
+  }
+  const monthKey = s => (s || '').slice(0, 7);
+  function lastMonths(today, n) {
+    const [y, m] = today.split('-').map(Number);
+    const out = [];
+    for (let i = n - 1; i >= 0; i--) {
+      const t = new Date(Date.UTC(y, m - 1 - i, 1));
+      out.push({ key: t.getUTCFullYear() + '-' + pad(t.getUTCMonth() + 1), label: MONTHS[t.getUTCMonth()] });
+    }
+    return out;
+  }
+
+  const paidSum = o => (o.payments || []).reduce((a, p) => a + (p.amt || 0), 0);
+  const remaining = o => Math.max(0, (o.total || 0) - paidSum(o));
+  function status(o, today) {
+    if (remaining(o) <= 0) return 'paid';
+    if (o.due && daysUntil(o.due, today) < 0) return 'late';
+    return 'open';
+  }
+  function sortOrders(list, today) {
+    const rank = { late: 0, open: 1, paid: 2 };
+    return list.slice().sort((a, b) => {
+      const ra = rank[status(a, today)], rb = rank[status(b, today)];
+      if (ra !== rb) return ra - rb;
+      if (ra < 2) {
+        const da = a.due || '9999-12-31', db = b.due || '9999-12-31';
+        if (da !== db) return da < db ? -1 : 1;
+      }
+      return (b.createdAt || '') < (a.createdAt || '') ? -1 : 1;
+    });
+  }
+  function dueLabel(o, today) {
+    if (!o.due || remaining(o) <= 0) return null;
+    const n = daysUntil(o.due, today);
+    if (n < 0) return { kind: 'late', text: 'En retard de ' + (-n) + ' j' };
+    if (n === 0) return { kind: 'soon', text: 'À payer aujourd’hui' };
+    if (n <= 3) return { kind: 'soon', text: 'Échéance dans ' + n + ' j' };
+    return { kind: 'plain', text: 'Échéance le ' + fmtDate(o.due) };
+  }
+
+  function payLine(s) {
+    if (!s || !s.momoNum) return '';
+    const op = s.momoOp && s.momoOp !== 'Autre' ? s.momoOp : 'Mobile Money';
+    return ' Vous pouvez payer par ' + op + ' au ' + prettyPhone(s.momoNum) + (s.momoName ? ' (' + s.momoName + ')' : '') + '.';
+  }
+  const firstName = o => (o.name || '').trim().split(/\s+/)[0] || '';
+  function reminderText(o, s, today) {
+    const shop = (s && s.shop) || '';
+    const f = firstName(o);
+    let t = 'Bonjour' + (f ? ' ' + f : '') + (shop ? ', ici ' + shop + '.' : ',') +
+      ' Petit rappel pour « ' + o.item + ' » : il reste ' + money(remaining(o)) + ' à régler.';
+    if (o.due) t += (daysUntil(o.due, today) < 0 ? ' Le paiement était prévu le ' : ' Le paiement est prévu le ') + fmtDate(o.due) + '.';
+    t += payLine(s);
+    if (s && s.momoNum) t += ' Merci de m’envoyer un message après le paiement.';
+    return t + ' Merci beaucoup !';
+  }
+  function receiptText(o, s, amt) {
+    const shop = (s && s.shop) || '';
+    const f = firstName(o);
+    let t = 'Bonjour' + (f ? ' ' + f : '') + ', ' + (shop ? 'reçu de ' + shop + ' : ' : 'reçu : ') +
+      money(amt) + ' bien reçus pour « ' + o.item + ' ».';
+    const r = remaining(o);
+    t += r > 0 ? ' Il reste ' + money(r) + ' à régler.' : ' Votre compte est soldé.';
+    return t + ' Merci !';
+  }
+
+  // Regroupe les ventes par client (téléphone si connu, sinon nom).
+  function clientKey(o) { return normPhone(o.phone) || (o.name || '').trim().toLowerCase(); }
+  function groupClients(orders, today) {
+    const map = new Map();
+    for (const o of orders) {
+      const k = clientKey(o);
+      if (!k) continue;
+      let c = map.get(k);
+      if (!c) { c = { key: k, name: o.name, phone: o.phone || '', orders: [], owed: 0, total: 0, last: '' }; map.set(k, c); }
+      if (!c.phone && o.phone) c.phone = o.phone;
+      c.orders.push(o);
+      c.owed += remaining(o);
+      c.total += o.total || 0;
+      if ((o.date || '') > c.last) c.last = o.date || '';
+    }
+    return [...map.values()].sort((a, b) => (b.owed - a.owed) || (a.name || '').localeCompare(b.name || '', 'fr'));
+  }
+  function statementText(c, s, today) {
+    const shop = (s && s.shop) || '';
+    const f = firstName(c);
+    const open = sortOrders(c.orders.filter(o => remaining(o) > 0), today);
+    if (!open.length) return 'Bonjour' + (f ? ' ' + f : '') + ', ' + (shop ? 'ici ' + shop + '. ' : '') + 'votre compte est soldé. Merci pour votre confiance !';
+    const lines = open.map(o => '• ' + o.item + ' : reste ' + money(remaining(o)) + (o.due ? ' (avant le ' + fmtDate(o.due) + ')' : ''));
+    return 'Bonjour' + (f ? ' ' + f : '') + ', voici votre relevé' + (shop ? ' chez ' + shop : '') + ' au ' + fmtDate(today) + ' :\n' +
+      lines.join('\n') + '\nTotal à régler : ' + money(c.owed) + '.' + payLine(s) + ' Merci !';
+  }
+
+  function summary(orders, today) {
+    const ym = monthKey(today);
+    let due = 0, open = 0, late = 0, sales = 0, collected = 0;
+    for (const o of orders) {
+      const r = remaining(o);
+      if (r > 0) { due += r; open++; if (status(o, today) === 'late') late++; }
+      if (monthKey(o.date) === ym) sales += o.total || 0;
+      for (const p of (o.payments || [])) if (monthKey(p.date) === ym) collected += p.amt || 0;
+    }
+    return { due, open, late, sales, collected };
+  }
+  function monthlySeries(orders, today, n) {
+    const ms = lastMonths(today, n);
+    const idx = {}; ms.forEach((m, i) => { idx[m.key] = i; m.sales = 0; m.collected = 0; });
+    for (const o of orders) {
+      if (monthKey(o.date) in idx) ms[idx[monthKey(o.date)]].sales += o.total || 0;
+      for (const p of (o.payments || [])) if (monthKey(p.date) in idx) ms[idx[monthKey(p.date)]].collected += p.amt || 0;
+    }
+    return ms;
+  }
+  function byMethod(orders, today) {
+    const ym = monthKey(today), m = {};
+    for (const o of orders) for (const p of (o.payments || [])) if (monthKey(p.date) === ym) {
+      const k = p.method || 'Espèces';
+      m[k] = (m[k] || 0) + (p.amt || 0);
+    }
+    return Object.entries(m).map(([name, amt]) => ({ name, amt })).sort((a, b) => b.amt - a.amt);
+  }
+  function niceMax(v) {
+    if (v <= 0) return 10000;
+    const e = Math.pow(10, Math.floor(Math.log10(v)));
+    const f = v / e;
+    return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 5 ? 5 : 10) * e;
+  }
+  function short(n) {
+    if (n >= 1e6) { const k = n / 1e6; return (Number.isInteger(k) ? k : k.toFixed(1).replace('.', ',')) + ' M'; }
+    if (n >= 1000) { const k = n / 1000; return (Number.isInteger(k) ? k : k.toFixed(1).replace('.', ',')) + ' k'; }
+    return String(n);
+  }
+
+  // Abonnement : état et activation d'un code.
+  function proStatus(lic, today) {
+    if (!lic || !lic.until) return 'free';
+    return lic.until >= today ? 'pro' : 'expired';
+  }
+  function canCreate(lic, created, today, freeSales) {
+    return proStatus(lic, today) === 'pro' || created < freeSales;
+  }
+  function applyCode(lic, clientId, code, today) {
+    const r = License.check(code, clientId);
+    if (!r.ok) return r;
+    if ((lic.used || []).indexOf(r.serial) >= 0) return { ok: false, reason: 'used' };
+    const base = lic.until && lic.until >= today ? lic.until : today;
+    const until = addMonths(base, r.months);
+    return { ok: true, months: r.months, until, lic: { until, used: (lic.used || []).concat([r.serial]) } };
+  }
+
+  function validBackup(j) {
+    if (!j || typeof j !== 'object' || !Array.isArray(j.orders)) return false;
+    return j.orders.every(o => o && typeof o === 'object' && typeof o.id === 'string' && typeof o.name === 'string' &&
+      typeof o.item === 'string' && typeof o.total === 'number' && (o.payments == null || Array.isArray(o.payments)));
+  }
+
+  return { fmt, money, toInt, MONTHS, normPhone, prettyPhone, todayStr, daysUntil, fmtDate, addMonths, monthKey, lastMonths, paidSum, remaining, status,
+    sortOrders, dueLabel, reminderText, receiptText, groupClients, statementText, summary, monthlySeries, byMethod, niceMax, short,
+    proStatus, canCreate, applyCode, validBackup };
+})();
+/*LOGIC-END*/
+
+
+(() => {
+  'use strict';
+  const L = Logic;
+  const CFG = {"ownerName": "", "ownerPhone": "0199204646", "freeSales": 15, "plans": [{"m": 1, "price": 1500}, {"m": 3, "price": 4000, "tag": "économisez 500"}, {"m": 6, "price": 7500, "tag": "économisez 1 500"}, {"m": 12, "price": 14000, "tag": "économisez 4 000"}], "offline": true, "test": false};
+  const KEY = 'carnet-boutique-v2';
+  const METHODS = ['Espèces', 'MTN MoMo', 'Moov Money', 'Celtiis Cash', 'Autre'];
+  const OPS = ['MTN MoMo', 'Moov Money', 'Celtiis Cash', 'Autre'];
+
+  let D = { v: 2, orders: [], settings: { shop: '', momoOp: 'MTN MoMo', momoNum: '', momoName: '', lastBackup: '', welcomed: false }, lic: { until: '', used: [] }, cid: '', created: 0 };
+  const V = { tab: 'sales', filter: 'open', q: '', cq: '', openClient: null, payOpen: null, payVal: '', payMethod: 'Espèces', delOpen: null, plan: 3, confirm: null, sheet: null, restoreText: '', restoreErr: '' };
+  let memOnly = false, deferredInstall = null, toastTimer = null;
+
+  /* ---------- petits outils DOM ---------- */
+  const h = (tag, props, ...kids) => {
+    const e = document.createElement(tag);
+    let val;
+    if (props) for (const k in props) {
+      const v = props[k];
+      if (v == null || v === false) continue;
+      if (k === 'class') e.className = v;
+      else if (k === 'text') e.textContent = v;
+      else if (k === 'value') val = v;
+      else if (k.startsWith('on')) e.addEventListener(k.slice(2), v);
+      else e.setAttribute(k, v === true ? '' : v);
+    }
+    for (const c of kids.flat(Infinity)) if (c != null && c !== false) e.append(c.nodeType ? c : document.createTextNode(c));
+    if (val !== undefined) e.value = val;
+    return e;
+  };
+  const NS = 'http://www.w3.org/2000/svg';
+  const sv = (tag, attrs, ...kids) => {
+    const e = document.createElementNS(NS, tag);
+    for (const k in attrs || {}) e.setAttribute(k, attrs[k]);
+    for (const c of kids.flat()) if (c != null) e.append(c.nodeType ? c : document.createTextNode(c));
+    return e;
+  };
+  const $ = id => document.getElementById(id);
+  const today = () => L.todayStr();
+
+  /* ---------- stockage ---------- */
+  function load() {
+    try {
+      const raw = localStorage.getItem(KEY);
+      if (raw) {
+        const j = JSON.parse(raw);
+        if (j && typeof j === 'object') {
+          D.orders = Array.isArray(j.orders) ? j.orders : [];
+          D.settings = Object.assign(D.settings, j.settings || {});
+          D.lic = Object.assign({ until: '', used: [] }, j.lic || {});
+          D.cid = j.cid || '';
+          D.created = j.created || 0;
+        }
+      } else {
+        const old = JSON.parse(localStorage.getItem('carnet-boutique-v1') || 'null');
+        if (old && Array.isArray(old.orders)) {
+          D.orders = old.orders.map(o => Object.assign({}, o, { payments: (o.payments || []).map(p => Object.assign({ method: 'Espèces' }, p)) }));
+          D.settings.shop = (old.settings && old.settings.shop) || '';
+          D.created = D.orders.filter(o => !o.example).length;
+          D.settings.welcomed = true;
+        }
+      }
+    } catch (e) { /* stockage indisponible */ }
+    if (!License.validClientId(D.cid)) D.cid = License.newClientId();
+  }
+  function save() {
+    try { localStorage.setItem(KEY, JSON.stringify(D)); memOnly = false; } catch (e) { memOnly = true; }
+  }
+  async function askPersist() {
+    try { if (navigator.storage && navigator.storage.persist) await navigator.storage.persist(); } catch (e) { /* ignoré */ }
+  }
+  const newId = () => 'o_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+
+  /* ---------- messages ---------- */
+  function toast(msg) {
+    const t = $('toast');
+    t.textContent = msg; t.hidden = false;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => { t.hidden = true; }, 3400);
+  }
+  function copyText(text, okMsg) {
+    const fail = () => toast('Copie impossible. Sélectionnez le texte à la main.');
+    try { navigator.clipboard.writeText(text).then(() => toast(okMsg || 'Copié.'), fail); } catch (e) { fail(); }
+  }
+  const waLink = (phone, text) => 'https://wa.me/' + phone + '?text=' + encodeURIComponent(text);
+  const proState = () => L.proStatus(D.lic, today());
+  const canCreate = () => CFG.test || L.canCreate(D.lic, D.created, today(), CFG.freeSales || 15);
+
+  /* ---------- navigation ---------- */
+  const ICONS = {
+    sales: 'M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01',
+    clients: 'M16 20v-1.5a3.5 3.5 0 0 0-3.5-3.5h-5A3.5 3.5 0 0 0 4 18.5V20M10 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7zM20 20v-1.5a3.5 3.5 0 0 0-2.5-3.35M15.5 4.2a3.5 3.5 0 0 1 0 6.6',
+    report: 'M5 20V10M12 20V4M19 20v-7',
+    settings: 'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z'
+  };
+  const TABS = [['sales', 'Ventes'], ['clients', 'Clients'], ['report', 'Bilan'], ['settings', 'Réglages']];
+  function renderNav() {
+    $('nav').replaceChildren(h('div', { class: 'nav-in' }, TABS.map(([k, label]) =>
+      h('button', { type: 'button', 'aria-current': V.tab === k ? 'page' : null, onclick: () => go(k) },
+        (() => { const s = sv('svg', { viewBox: '0 0 24 24', 'aria-hidden': 'true' }, sv('path', { d: ICONS[k] })); return s; })(), label))));
+    $('fab').hidden = !(V.tab === 'sales' || V.tab === 'clients');
+  }
+  function go(tab) {
+    V.tab = tab; V.payOpen = null; V.delOpen = null; V.confirm = null;
+    render(); window.scrollTo(0, 0);
+  }
+
+  /* ---------- actions sur les ventes ---------- */
+  function saveOrder(o) {
+    const i = D.orders.findIndex(x => x.id === o.id);
+    if (i >= 0) D.orders[i] = o; else D.orders.push(o);
+    save(); render();
+  }
+  function removeOrder(id) { D.orders = D.orders.filter(x => x.id !== id); save(); render(); }
+
+  /* ---------- carte d'une vente ---------- */
+  function card(o) {
+    const t = today();
+    const rem = L.remaining(o), total = o.total || 1;
+    const pct = Math.min(100, Math.round(L.paidSum(o) / total * 100));
+    const phone = L.normPhone(o.phone);
+    const due = L.dueLabel(o, t);
+    const pays = o.payments || [];
+
+    const actions = h('div', { class: 'actions' });
+    if (rem > 0) {
+      actions.append(h('button', { class: 'btn primary', type: 'button', onclick: () => { V.payOpen = o.id; V.payVal = String(rem); V.payMethod = 'Espèces'; V.delOpen = null; render(); const i = $('pay-' + o.id); if (i) i.focus(); } }, 'Paiement reçu'));
+      const msg = L.reminderText(o, D.settings, t);
+      actions.append(phone
+        ? h('a', { class: 'btn wa', href: waLink(phone, msg), target: '_blank', rel: 'noopener' }, 'Relancer')
+        : h('button', { class: 'btn wa', type: 'button', onclick: () => copyText(msg, 'Rappel copié. Collez-le dans WhatsApp.') }, 'Copier le rappel'));
+    } else if (pays.length) {
+      const msg = L.receiptText(o, D.settings, pays[pays.length - 1].amt);
+      actions.append(phone
+        ? h('a', { class: 'btn wa', href: waLink(phone, msg), target: '_blank', rel: 'noopener' }, 'Envoyer le reçu')
+        : h('button', { class: 'btn wa', type: 'button', onclick: () => copyText(msg, 'Reçu copié. Collez-le dans WhatsApp.') }, 'Copier le reçu'));
+    }
+    actions.append(h('button', { class: 'btn ghost', type: 'button', onclick: () => openSaleSheet(o.id) }, 'Modifier'));
+    actions.append(h('span', { class: 'spacer' }));
+    if (V.delOpen === o.id) {
+      actions.append(
+        h('button', { class: 'btn danger', type: 'button', onclick: () => { V.delOpen = null; removeOrder(o.id); toast('Vente supprimée.'); } }, 'Oui, supprimer'),
+        h('button', { class: 'btn ghost', type: 'button', onclick: () => { V.delOpen = null; render(); } }, 'Garder'));
+    } else {
+      actions.append(h('button', { class: 'btn ghost', type: 'button', onclick: () => { V.delOpen = o.id; V.payOpen = null; render(); } }, 'Supprimer'));
+    }
+
+    let payPanel = null;
+    if (V.payOpen === o.id && rem > 0) {
+      const inp = h('input', { id: 'pay-' + o.id, class: 'amt-input', type: 'text', inputmode: 'numeric', value: V.payVal, 'aria-label': 'Montant reçu en FCFA', oninput: e => { V.payVal = e.target.value; } });
+      const sel = h('select', { id: 'pm-' + o.id, 'aria-label': 'Reçu par', value: V.payMethod, onchange: e => { V.payMethod = e.target.value; } }, METHODS.map(m => h('option', { value: m }, m)));
+      sel.value = V.payMethod;
+      const confirm = () => {
+        let amt = L.toInt(V.payVal);
+        if (amt <= 0) { toast('Entrez le montant reçu.'); return; }
+        amt = Math.min(amt, rem);
+        const next = Object.assign({}, o, { payments: pays.concat([{ amt, date: t, method: V.payMethod }]) });
+        V.payOpen = null;
+        saveOrder(next);
+        toast(L.remaining(next) > 0 ? L.money(amt) + ' enregistrés. Reste ' + L.money(L.remaining(next)) + '.' : 'Compte soldé. Bravo !');
+      };
+      inp.addEventListener('keydown', e => { if (e.key === 'Enter') confirm(); });
+      payPanel = h('div', { class: 'panel' },
+        h('div', { class: 'field' }, h('label', { for: 'pay-' + o.id }, 'Montant reçu (FCFA)'), inp),
+        h('div', { class: 'field' }, h('label', { for: 'pm-' + o.id }, 'Reçu par'), sel),
+        h('button', { class: 'btn primary', type: 'button', onclick: confirm }, 'Valider'),
+        h('button', { class: 'btn ghost', type: 'button', onclick: () => { V.payOpen = null; render(); } }, 'Annuler'));
+    }
+
+    const hist = pays.length ? h('details', { class: 'hist' },
+      h('summary', null, 'Paiements reçus (' + pays.length + ')'),
+      pays.map((p, i) => h('div', { class: 'hist-row' },
+        h('span', null, L.fmtDate(p.date) + ' · ' + L.money(p.amt) + ' · ' + (p.method || 'Espèces')),
+        h('button', { class: 'btn ghost', type: 'button', 'aria-label': 'Annuler ce paiement', onclick: () => {
+          saveOrder(Object.assign({}, o, { payments: pays.filter((_, j) => j !== i) })); toast('Paiement annulé.');
+        } }, 'Annuler')))) : null;
+
+    return h('article', { class: 'card' },
+      h('div', { class: 'row' },
+        h('div', null,
+          h('div', { class: 'who' }, o.name, o.example ? h('span', { class: 'pill ex', style: 'margin-left:8px' }, 'Exemple') : null),
+          h('div', { class: 'what' }, o.item)),
+        h('div', { class: 'rest' },
+          rem > 0 ? h('div', { class: 'amt' }, L.money(rem)) : h('span', { class: 'pill ok' }, 'Soldé'),
+          rem > 0 ? h('div', { class: 'cap' }, 'reste à payer') : null)),
+      h('div', { class: 'bar-track', role: 'img', 'aria-label': pct + ' % payé' }, h('div', { class: 'bar-fill', style: 'width:' + pct + '%' })),
+      h('div', { class: 'meta' },
+        h('span', null, 'Total ' + L.money(o.total)),
+        h('span', null, 'Payé ' + L.money(L.paidSum(o))),
+        due ? h('span', { class: due.kind === 'plain' ? '' : 'pill ' + due.kind }, due.text) : null),
+      payPanel, hist, actions);
+  }
+
+  /* ---------- en-tête commun ---------- */
+  function chipEl() {
+    if (CFG.test) return h('button', { class: 'chip pro', type: 'button', onclick: openFeedbackSheet }, 'Version test · Donner mon avis');
+    const st = proState();
+    if (st === 'pro') return h('button', { class: 'chip pro', type: 'button', onclick: openProSheet }, 'Pro jusqu’au ' + L.fmtDate(D.lic.until));
+    if (st === 'expired') return h('button', { class: 'chip exp', type: 'button', onclick: openProSheet }, 'Abonnement expiré');
+    return h('button', { class: 'chip', type: 'button', onclick: openProSheet }, 'Gratuit · ' + Math.min(D.created, CFG.freeSales || 15) + '/' + (CFG.freeSales || 15) + ' ventes');
+  }
+  function header() {
+    const shopInput = h('input', { id: 'shop-name', class: 'shop', type: 'text', placeholder: 'Nom de votre boutique', maxlength: '60', value: D.settings.shop || '', 'aria-label': 'Nom de votre boutique',
+      onchange: e => { D.settings.shop = e.target.value.trim(); save(); } });
+    return h('header', { class: 'top' }, h('div', { class: 'toprow' }, h('div', { class: 'eyebrow' }, 'Carnet de ventes'), chipEl()), shopInput);
+  }
+
+  /* ---------- onglet Ventes ---------- */
+  function viewSales() {
+    const t = today();
+    const sum = L.summary(D.orders, t);
+    const sorted = L.sortOrders(D.orders, t);
+    const opens = sorted.filter(o => L.remaining(o) > 0), paids = sorted.filter(o => L.remaining(o) <= 0);
+    let shown = V.filter === 'open' ? opens : V.filter === 'paid' ? paids : sorted;
+    const q = V.q.trim().toLowerCase();
+    if (q) shown = shown.filter(o => (o.name + ' ' + o.item).toLowerCase().indexOf(q) >= 0);
+
+    const heroSub = !D.orders.length
+      ? 'Ajoutez une vente pour suivre qui vous doit de l’argent.'
+      : sum.open === 0 ? 'Tout est encaissé. Aucun client ne vous doit rien.'
+        : sum.open + (sum.open > 1 ? ' ventes non soldées' : ' vente non soldée') + (sum.late ? ', dont ' + sum.late + ' en retard' : '');
+    const tabBtn = (key, label, n) => h('button', { class: 'tab', role: 'tab', type: 'button', 'aria-selected': V.filter === key ? 'true' : 'false',
+      onclick: () => { V.filter = key; V.payOpen = null; V.delOpen = null; render(); } }, label, h('span', { class: 'n' }, String(n)));
+
+    let body;
+    if (!D.orders.length) {
+      body = h('div', { class: 'empty' },
+        h('h2', null, 'Votre carnet est vide'),
+        h('p', null, 'Notez chaque vente avec le montant déjà payé. Le carnet calcule ce qu’il reste à encaisser et prépare le message de rappel pour WhatsApp.'),
+        h('div', { class: 'actions' },
+          h('button', { class: 'btn primary', type: 'button', onclick: () => openSaleSheet() }, 'Ajouter ma première vente'),
+          h('button', { class: 'btn', type: 'button', onclick: loadExamples }, 'Voir un exemple')));
+    } else if (!shown.length) {
+      body = h('div', { class: 'empty' }, h('h2', null, q ? 'Aucun résultat' : V.filter === 'open' ? 'Rien à encaisser' : 'Aucune vente soldée'),
+        h('p', null, q ? 'Essayez un autre nom ou un autre article.' : V.filter === 'open' ? 'Toutes vos ventes sont payées.' : 'Les ventes entièrement payées apparaîtront ici.'));
+    } else {
+      body = h('div', { class: 'list' }, shown.map(card));
+    }
+
+    const lastB = D.settings.lastBackup;
+    const oldBackup = D.orders.length >= 5 && (!lastB || L.daysUntil(t, lastB) > 14);
+    const hasEx = D.orders.some(o => o.example);
+    const search = D.orders.length > 4 ? h('input', { id: 'sale-search', type: 'search', placeholder: 'Chercher un client ou un article', value: V.q, 'aria-label': 'Chercher une vente',
+      oninput: e => { V.q = e.target.value; const pos = e.target.selectionStart; render(); const i = $('sale-search'); if (i) { i.focus(); try { i.setSelectionRange(pos, pos); } catch (x) { /* ignoré */ } } } }) : null;
+
+    return [
+      header(),
+      h('section', { class: 'hero', 'aria-label': 'Résumé' },
+        h('div', { class: 'label' }, 'À encaisser'),
+        h('div', { class: 'big' }, L.fmt(sum.due), h('small', null, 'FCFA')),
+        h('div', { class: 'sub' }, heroSub),
+        h('div', { class: 'stats' },
+          h('div', { class: 'stat' }, h('div', { class: 'k' }, 'Encaissé ce mois'), h('div', { class: 'v' }, L.money(sum.collected))),
+          h('div', { class: 'stat' }, h('div', { class: 'k' }, 'Ventes ce mois'), h('div', { class: 'v' }, L.money(sum.sales))))),
+      CFG.test && D.created >= 3 && !D.settings.fbSent ? h('div', { class: 'banner' }, h('span', null, 'Votre avis nous aide à finaliser le carnet.'), h('button', { class: 'btn', type: 'button', onclick: openFeedbackSheet }, 'Donner mon avis')) : null,
+      memOnly ? h('div', { class: 'banner' }, h('span', null, 'Ce navigateur n’enregistre pas vos ventes. Faites une sauvegarde avant de fermer.'), h('button', { class: 'btn', type: 'button', onclick: () => go('settings') }, 'Sauvegarder')) : null,
+      !memOnly && oldBackup ? h('div', { class: 'banner' }, h('span', null, 'Pensez à sauvegarder vos ventes.'), h('button', { class: 'btn', type: 'button', onclick: () => go('settings') }, 'Sauvegarder')) : null,
+      D.orders.length ? h('div', { class: 'tabs', role: 'tablist' }, tabBtn('open', 'À encaisser', opens.length), tabBtn('all', 'Tout', sorted.length), tabBtn('paid', 'Soldées', paids.length)) : null,
+      search,
+      body,
+      hasEx ? h('div', { class: 'actions' }, h('button', { class: 'btn', type: 'button', onclick: clearExamples }, 'Effacer les exemples')) : null
+    ];
+  }
+
+  function loadExamples() {
+    const t = today(), d = n => { const x = new Date(); x.setDate(x.getDate() + n); return L.todayStr(x); };
+    [
+      { name: 'Mariam K.', item: '2 robes en wax', total: 45000, pay: 20000, m: 'MTN MoMo', due: d(-5) },
+      { name: 'Chef Rodrigue', item: 'Plateau de 50 beignets', total: 30000, pay: 0, m: 'Espèces', due: d(3) },
+      { name: 'Sonia A.', item: 'Tresses et soins', total: 15000, pay: 15000, m: 'Moov Money', due: '' }
+    ].forEach(x => D.orders.push({ id: newId(), name: x.name, phone: '', item: x.item, total: x.total, due: x.due, date: t, createdAt: new Date().toISOString() + Math.random(),
+      payments: x.pay ? [{ amt: x.pay, date: t, method: x.m }] : [], example: true }));
+    D.settings.welcomed = true; save(); render();
+  }
+  function clearExamples() { D.orders = D.orders.filter(o => !o.example); save(); render(); toast('Exemples effacés.'); }
+
+  /* ---------- onglet Clients ---------- */
+  function viewClients() {
+    const t = today();
+    let list = L.groupClients(D.orders, t);
+    const q = V.cq.trim().toLowerCase();
+    if (q) list = list.filter(c => (c.name || '').toLowerCase().indexOf(q) >= 0);
+    const search = D.orders.length > 4 ? h('input', { id: 'client-search', type: 'search', placeholder: 'Chercher un client', value: V.cq, 'aria-label': 'Chercher un client',
+      oninput: e => { V.cq = e.target.value; const pos = e.target.selectionStart; render(); const i = $('client-search'); if (i) { i.focus(); try { i.setSelectionRange(pos, pos); } catch (x) { /* ignoré */ } } } }) : null;
+    let body;
+    if (!list.length) {
+      body = h('div', { class: 'empty' }, h('h2', null, q ? 'Aucun client trouvé' : 'Aucun client pour l’instant'),
+        h('p', null, q ? 'Essayez un autre nom.' : 'Vos clients apparaissent ici dès votre première vente, avec ce que chacun vous doit.'));
+    } else {
+      body = h('div', { class: 'list' }, list.map(c => {
+        const open = V.openClient === c.key;
+        const phone = L.normPhone(c.phone);
+        const stmt = L.statementText(c, D.settings, t);
+        const parts = [
+          h('button', { class: 'row', type: 'button', style: 'background:none;border:0;padding:0;text-align:left;width:100%', 'aria-expanded': open ? 'true' : 'false', onclick: () => { V.openClient = open ? null : c.key; render(); } },
+            h('div', null, h('div', { class: 'who' }, c.name), h('div', { class: 'what' }, c.orders.length + (c.orders.length > 1 ? ' ventes' : ' vente') + ' · dernière le ' + L.fmtDate(c.last))),
+            h('div', { class: 'rest' }, c.owed > 0 ? h('div', { class: 'amt' }, L.money(c.owed)) : h('span', { class: 'pill ok' }, 'À jour'), c.owed > 0 ? h('div', { class: 'cap' }, 'à encaisser') : null))
+        ];
+        if (open) {
+          parts.push(h('div', { class: 'meta' }, h('span', null, 'Total acheté ' + L.money(c.total)), c.phone ? h('span', null, L.prettyPhone(c.phone)) : null));
+          parts.push(h('div', null, L.sortOrders(c.orders, t).map(o => h('div', { class: 'hist-row' },
+            h('span', null, L.fmtDate(o.date) + ' · ' + o.item),
+            h('span', null, L.remaining(o) > 0 ? 'reste ' + L.money(L.remaining(o)) : 'soldé')))));
+          parts.push(h('div', { class: 'actions' }, phone
+            ? h('a', { class: 'btn wa', href: waLink(phone, stmt), target: '_blank', rel: 'noopener' }, 'Envoyer le relevé')
+            : h('button', { class: 'btn wa', type: 'button', onclick: () => copyText(stmt, 'Relevé copié. Collez-le dans WhatsApp.') }, 'Copier le relevé')));
+        }
+        return h('article', { class: 'card' }, parts);
+      }));
+    }
+    return [header(), search, body];
+  }
+
+  /* ---------- onglet Bilan ---------- */
+  function chart(series) {
+    const W = 340, Ht = 176, x0 = 40, x1 = 334, y0 = 12, y1 = 144;
+    const max = L.niceMax(Math.max.apply(null, series.map(s => Math.max(s.sales, s.collected))));
+    const gw = (x1 - x0) / series.length, bw = 15;
+    const y = v => y1 - (v / max) * (y1 - y0);
+    const svg = sv('svg', { viewBox: '0 0 ' + W + ' ' + Ht, role: 'img', 'aria-label': 'Ventes et encaissements des 6 derniers mois' });
+    [0, 0.5, 1].forEach(f => {
+      const v = max * f;
+      svg.append(sv('line', { x1: x0, x2: x1, y1: y(v), y2: y(v), stroke: 'var(--line)', 'stroke-width': 1 }));
+      svg.append(sv('text', { x: x0 - 5, y: y(v) + 3, 'text-anchor': 'end', class: 'ax' }, L.short(v)));
+    });
+    series.forEach((s, i) => {
+      const cx = x0 + gw * i + gw / 2;
+      [[s.sales, 'var(--line)', -bw - 1.5, 'sales'], [s.collected, 'var(--accent)', 1.5, 'col']].forEach(([v, fill, dx]) => {
+        const hgt = Math.max(v > 0 ? 2 : 0, y1 - y(v));
+        svg.append(sv('rect', { x: cx + dx, y: y1 - hgt, width: bw, height: hgt, rx: 3, fill }));
+      });
+      svg.append(sv('text', { x: cx, y: y1 + 15, 'text-anchor': 'middle', class: 'ax' }, s.label));
+    });
+    return svg;
+  }
+  function viewReport() {
+    const t = today();
+    const sum = L.summary(D.orders, t);
+    const series = L.monthlySeries(D.orders, t, 6);
+    const methods = L.byMethod(D.orders, t);
+    const mMax = methods.length ? methods[0].amt : 1;
+    const debtors = L.groupClients(D.orders, t).filter(c => c.owed > 0).slice(0, 3);
+    const monthName = L.MONTHS[Number(t.slice(5, 7)) - 1];
+    return [
+      h('header', { class: 'top' }, h('div', { class: 'toprow' }, h('div', { class: 'eyebrow' }, 'Bilan'), chipEl()), h('div', { class: 'shop', style: 'border:0' }, 'Votre activité')),
+      h('div', { class: 'cols' },
+        h('div', { class: 'kpi' }, h('div', { class: 'k' }, 'Ventes en ' + monthName), h('div', { class: 'v' }, L.money(sum.sales))),
+        h('div', { class: 'kpi' }, h('div', { class: 'k' }, 'Encaissé en ' + monthName), h('div', { class: 'v' }, L.money(sum.collected))),
+        h('div', { class: 'kpi' }, h('div', { class: 'k' }, 'Reste à encaisser'), h('div', { class: 'v' }, L.money(sum.due))),
+        h('div', { class: 'kpi' }, h('div', { class: 'k' }, 'Ventes en retard'), h('div', { class: 'v' }, String(sum.late)))),
+      h('section', { class: 'sect' },
+        h('h2', null, '6 derniers mois'),
+        h('div', { class: 'legend' }, h('span', null, h('i', { style: 'background:var(--line)' }), 'Ventes'), h('span', null, h('i', { style: 'background:var(--accent)' }), 'Encaissé')),
+        h('div', { class: 'chart-wrap' }, chart(series))),
+      h('section', { class: 'sect' },
+        h('h2', null, 'Encaissé en ' + monthName + ', par moyen'),
+        methods.length ? methods.map(m => h('div', { class: 'mrow' },
+          h('div', { class: 't' }, h('span', null, m.name), h('b', null, L.money(m.amt))),
+          h('div', { class: 'bar-track' }, h('div', { class: 'bar-fill', style: 'width:' + Math.round(m.amt / mMax * 100) + '%' }))))
+          : h('p', null, 'Aucun paiement reçu ce mois-ci.')),
+      h('section', { class: 'sect' },
+        h('h2', null, 'Ceux qui vous doivent le plus'),
+        debtors.length ? debtors.map(c => h('div', { class: 'kv' }, h('span', null, c.name), h('b', null, L.money(c.owed)))) : h('p', null, 'Personne ne vous doit d’argent.'))
+    ];
+  }
+
+  /* ---------- onglet Réglages ---------- */
+  function exportData() {
+    return JSON.stringify({ app: 'carnet-boutique', v: 2, exported: new Date().toISOString(), orders: D.orders, settings: D.settings, lic: D.lic, cid: D.cid, created: D.created });
+  }
+  function markBackup() { D.settings.lastBackup = today(); save(); render(); }
+  function downloadBackup() {
+    try {
+      const blob = new Blob([exportData()], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'carnet-boutique-sauvegarde-' + today() + '.json';
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+      markBackup(); toast('Sauvegarde enregistrée dans vos téléchargements.');
+    } catch (e) { toast('Enregistrement impossible. Utilisez « Copier la sauvegarde ».'); }
+  }
+  function copyBackup() {
+    try { navigator.clipboard.writeText(exportData()).then(() => { markBackup(); toast('Sauvegarde copiée. Collez-la dans un message à vous-même.'); }, () => toast('Copie impossible. Utilisez « Enregistrer un fichier ».')); }
+    catch (e) { toast('Copie impossible. Utilisez « Enregistrer un fichier ».'); }
+  }
+  function restore(text) {
+    let j;
+    try { j = JSON.parse(text); } catch (e) { return 'Ce texte n’est pas une sauvegarde valide.'; }
+    if (!L.validBackup(j)) return 'Cette sauvegarde est incomplète ou ne vient pas du Carnet Boutique.';
+    D.orders = j.orders;
+    D.settings = Object.assign(D.settings, j.settings || {});
+    if (j.lic && typeof j.lic === 'object') D.lic = Object.assign({ until: '', used: [] }, j.lic);
+    if (j.cid && License.validClientId(j.cid)) D.cid = j.cid;
+    D.created = Math.max(D.created, j.created || 0, D.orders.filter(o => !o.example).length);
+    save(); render();
+    return '';
+  }
+  function isIOS() { return /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); }
+  function isStandalone() { return (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true; }
+
+  function viewSettings() {
+    const s = D.settings, st = proState();
+    const set = (k, v) => { s[k] = v; save(); };
+    const opSel = h('select', { id: 'momo-op', 'aria-label': 'Opérateur Mobile Money', onchange: e => set('momoOp', e.target.value) }, OPS.map(o => h('option', { value: o }, o)));
+    opSel.value = s.momoOp || 'MTN MoMo';
+    const momoNum = h('input', { id: 'momo-num', type: 'tel', inputmode: 'tel', placeholder: '01 97 00 00 00', value: s.momoNum || '', onchange: e => {
+      const v = e.target.value.trim();
+      if (v && !L.normPhone(v)) { toast('Numéro incomplet. Vérifiez le nombre de chiffres.'); e.target.setAttribute('aria-invalid', 'true'); return; }
+      e.target.removeAttribute('aria-invalid'); set('momoNum', v);
+    } });
+    const momoName = h('input', { id: 'momo-name', type: 'text', maxlength: '40', placeholder: 'Nom du compte (facultatif)', value: s.momoName || '', onchange: e => set('momoName', e.target.value.trim()) });
+
+    const restoreArea = h('textarea', { id: 'restore-text', placeholder: 'Collez ici le texte de votre sauvegarde', 'aria-label': 'Texte de la sauvegarde', value: V.restoreText,
+      oninput: e => { V.restoreText = e.target.value; } });
+    const restoreErr = V.restoreErr ? h('div', { class: 'err', id: 'restore-err' }, V.restoreErr) : null;
+    const doRestoreText = text => {
+      V.confirm = null;
+      const msg = restore(text);
+      if (msg) { V.restoreErr = msg; render(); } else { V.restoreErr = ''; V.restoreText = ''; render(); toast('Sauvegarde restaurée.'); }
+    };
+    const fileIn = h('input', { id: 'restore-file', type: 'file', accept: '.json,application/json', 'aria-label': 'Fichier de sauvegarde', onchange: e => {
+      const f = e.target.files && e.target.files[0]; if (!f) return;
+      const r = new FileReader();
+      r.onload = () => { V.restoreText = String(r.result); V.restoreErr = ''; V.confirm = 'restore'; render(); };
+      r.readAsText(f);
+    } });
+
+    const installSteps = isStandalone()
+      ? h('p', null, 'Le carnet est déjà installé sur cet appareil.')
+      : h('ol', null,
+        isIOS() ? [h('li', null, 'Ouvrez cette page dans Safari.'), h('li', null, 'Touchez le bouton Partager (carré avec une flèche).'), h('li', null, 'Choisissez « Sur l’écran d’accueil ».')]
+          : [h('li', null, 'Ouvrez cette page dans Chrome.'), h('li', null, 'Touchez le menu ⋮ en haut à droite.'), h('li', null, 'Choisissez « Ajouter à l’écran d’accueil » ou « Installer l’application ».')]);
+
+    const planTxt = st === 'pro' ? 'Pro jusqu’au ' + L.fmtDate(D.lic.until) : st === 'expired' ? 'Expiré le ' + L.fmtDate(D.lic.until) : 'Gratuit (' + Math.min(D.created, CFG.freeSales || 15) + (D.created > 1 ? ' ventes' : ' vente') + ' sur ' + (CFG.freeSales || 15) + ')';
+
+    return [
+      h('header', { class: 'top' }, h('div', { class: 'toprow' }, h('div', { class: 'eyebrow' }, 'Réglages'), chipEl()), h('div', { class: 'shop', style: 'border:0' }, 'Votre carnet')),
+      h('section', { class: 'sect' },
+        h('h2', null, 'Paiement par Mobile Money'),
+        h('p', null, 'Votre numéro est ajouté aux messages de rappel. Vos clients savent où envoyer l’argent.'),
+        h('div', { class: 'field' }, h('label', { for: 'momo-op' }, 'Opérateur'), opSel),
+        h('div', { class: 'field' }, h('label', { for: 'momo-num' }, 'Numéro qui reçoit les paiements'), momoNum),
+        h('div', { class: 'field' }, h('label', { for: 'momo-name' }, 'Nom affiché au client'), momoName)),
+      CFG.test ? h('section', { class: 'sect' },
+        h('h2', null, 'Votre avis'),
+        h('p', null, 'Vous essayez la version test du carnet. Dites-nous ce qui est utile, ce qui manque et ce qui vous gêne.'),
+        h('button', { class: 'btn primary block', type: 'button', onclick: openFeedbackSheet }, 'Donner mon avis')) : h('section', { class: 'sect' },
+        h('h2', null, 'Abonnement'),
+        h('div', { class: 'kv' }, h('span', null, 'Formule'), h('b', null, planTxt)),
+        h('div', { class: 'kv' }, h('span', null, 'Votre numéro client'), h('b', null, License.fmtClientId(D.cid))),
+        h('button', { class: 'btn primary block', type: 'button', onclick: openProSheet }, st === 'pro' ? 'Prolonger mon abonnement' : 'Passer à Pro')),
+      h('section', { class: 'sect' },
+        h('h2', null, 'Sauvegarde de vos ventes'),
+        h('p', null, 'Vos ventes sont gardées sur cet appareil. Si vous changez de téléphone ou effacez les données du navigateur, elles disparaissent. Sauvegardez régulièrement.'),
+        h('div', { class: 'kv' }, h('span', null, 'Dernière sauvegarde'), h('b', null, s.lastBackup ? L.fmtDate(s.lastBackup) : 'Jamais')),
+        h('div', { class: 'actions' },
+          h('button', { class: 'btn primary', type: 'button', onclick: downloadBackup }, 'Enregistrer un fichier'),
+          h('button', { class: 'btn', type: 'button', onclick: copyBackup }, 'Copier la sauvegarde')),
+        h('div', { class: 'field' }, h('label', { for: 'restore-file' }, 'Restaurer depuis un fichier'), fileIn),
+        h('div', { class: 'field' }, h('label', { for: 'restore-text' }, 'Ou depuis un texte copié'), restoreArea, restoreErr),
+        V.confirm === 'restore'
+          ? h('div', { class: 'actions' }, h('button', { class: 'btn danger', type: 'button', onclick: () => doRestoreText(V.restoreText) }, 'Oui, remplacer mes ventes'), h('button', { class: 'btn ghost', type: 'button', onclick: () => { V.confirm = null; render(); } }, 'Annuler'))
+          : h('button', { class: 'btn', type: 'button', onclick: () => { if (!V.restoreText.trim()) { V.restoreErr = 'Collez d’abord le texte de votre sauvegarde.'; render(); return; } V.restoreErr = ''; V.confirm = 'restore'; render(); } }, 'Restaurer le texte collé')),
+      h('section', { class: 'sect' },
+        h('h2', null, 'Installer sur l’écran d’accueil'),
+        h('p', null, 'Le carnet s’ouvre alors comme une application, même sans connexion.'),
+        deferredInstall ? h('button', { class: 'btn primary', type: 'button', onclick: async () => { try { deferredInstall.prompt(); await deferredInstall.userChoice; } catch (e) { /* ignoré */ } deferredInstall = null; render(); } }, 'Installer maintenant') : null,
+        installSteps),
+      h('section', { class: 'sect' },
+        h('h2', null, 'Aide rapide'),
+        h('ol', null,
+          h('li', null, 'Touchez « Nouvelle vente » et remplissez le nom, l’article et le montant.'),
+          h('li', null, 'Quand un client paie, touchez « Paiement reçu » sur sa vente.'),
+          h('li', null, 'Pour rappeler un client, touchez « Relancer » : WhatsApp s’ouvre avec le message prêt.')),
+        D.orders.some(o => o.example) ? h('button', { class: 'btn', type: 'button', onclick: clearExamples }, 'Effacer les ventes d’exemple') : null),
+      h('section', { class: 'sect' },
+        h('h2', null, 'Effacer toutes mes données'),
+        h('p', null, 'Supprime toutes les ventes de cet appareil. Pensez à sauvegarder avant.'),
+        V.confirm === 'wipe'
+          ? h('div', { class: 'actions' }, h('button', { class: 'btn danger', type: 'button', onclick: () => { D.orders = []; D.created = Math.max(D.created, 0); V.confirm = null; save(); render(); toast('Ventes effacées.'); } }, 'Oui, tout effacer'), h('button', { class: 'btn ghost', type: 'button', onclick: () => { V.confirm = null; render(); } }, 'Annuler'))
+          : h('button', { class: 'btn danger', type: 'button', onclick: () => { V.confirm = 'wipe'; render(); } }, 'Effacer mes ventes')),
+      h('p', { class: 'note' }, 'Carnet Boutique · vos données restent sur votre appareil.')
+    ];
+  }
+
+  /* ---------- feuilles (formulaires) ---------- */
+  function openSheet(node) {
+    const ov = $('overlay');
+    ov.replaceChildren(node); ov.hidden = false; V.sheet = true;
+  }
+  function closeSheet() { $('overlay').hidden = true; V.sheet = null; $('overlay').replaceChildren(); }
+
+  function fieldEl(id, label, input, err, hint) {
+    return h('div', { class: 'field' }, h('label', { for: id }, label), input,
+      err ? h('div', { class: 'err', id: id + '-err' }, err) : (hint ? h('div', { class: 'hint' }, hint) : null));
+  }
+
+  function openSaleSheet(editId) {
+    if (!editId && !canCreate()) { openProSheet(true); return; }
+    const o = editId ? D.orders.find(x => x.id === editId) : null;
+    const F = o ? { name: o.name, phone: o.phone || '', item: o.item, total: String(o.total), paid: '', due: o.due || '' } : { name: '', phone: '', item: '', total: '', paid: '', due: '' };
+    const draw = errs => {
+      const inp = (id, key, attrs) => h('input', Object.assign({ id, value: F[key], 'aria-invalid': errs[id] ? 'true' : null, 'aria-describedby': errs[id] ? id + '-err' : null,
+        oninput: ev => { F[key] = ev.target.value; } }, attrs));
+      const form = h('form', { class: 'sheet', novalidate: 'novalidate', 'aria-label': o ? 'Modifier la vente' : 'Nouvelle vente', onsubmit: ev => { ev.preventDefault(); submit(); } },
+        h('h2', null, o ? 'Modifier la vente' : 'Nouvelle vente'),
+        fieldEl('f-name', 'Nom du client', inp('f-name', 'name', { type: 'text', autocomplete: 'off', maxlength: '60', placeholder: 'Ex. Mariam Koukpaki' }), errs['f-name']),
+        fieldEl('f-item', 'Ce qui a été vendu', inp('f-item', 'item', { type: 'text', autocomplete: 'off', maxlength: '80', placeholder: 'Ex. 2 robes en wax' }), errs['f-item']),
+        h('div', { class: 'two' },
+          fieldEl('f-total', 'Montant total (FCFA)', inp('f-total', 'total', { type: 'text', inputmode: 'numeric', class: 'amt-input', placeholder: '45 000' }), errs['f-total']),
+          o ? null : fieldEl('f-paid', 'Déjà payé (FCFA)', inp('f-paid', 'paid', { type: 'text', inputmode: 'numeric', class: 'amt-input', placeholder: '0' }), errs['f-paid'])),
+        fieldEl('f-phone', 'WhatsApp du client (facultatif)', inp('f-phone', 'phone', { type: 'tel', inputmode: 'tel', autocomplete: 'off', placeholder: '01 97 00 00 00' }), errs['f-phone'],
+          'Numéro du Bénin : 10 chiffres. Autre pays : commencez par + et l’indicatif.'),
+        fieldEl('f-due', 'Date limite de paiement (facultatif)', inp('f-due', 'due', { type: 'date' }), null),
+        h('div', { class: 'actions' },
+          h('button', { class: 'btn primary', type: 'submit', style: 'flex:1' }, o ? 'Enregistrer les changements' : 'Enregistrer la vente'),
+          h('button', { class: 'btn', type: 'button', onclick: closeSheet }, 'Annuler')));
+      openSheet(form);
+    };
+    const submit = () => {
+      const errs = {};
+      const total = L.toInt(F.total), paid = L.toInt(F.paid);
+      if (!F.name.trim()) errs['f-name'] = 'Entrez le nom du client.';
+      if (!F.item.trim()) errs['f-item'] = 'Dites ce qui a été vendu.';
+      if (total <= 0) errs['f-total'] = 'Entrez le montant total.';
+      else if (o && total < L.paidSum(o)) errs['f-total'] = 'Le total est inférieur à ce qui a déjà été payé (' + L.money(L.paidSum(o)) + ').';
+      else if (!o && paid > total) errs['f-paid'] = 'Le montant payé dépasse le total.';
+      if (F.phone.trim() && !L.normPhone(F.phone)) errs['f-phone'] = 'Numéro incomplet. Vérifiez le nombre de chiffres.';
+      if (Object.keys(errs).length) { draw(errs); const f = $(Object.keys(errs)[0]); if (f) f.focus(); return; }
+      const t = today();
+      if (o) {
+        closeSheet();
+        saveOrder(Object.assign({}, o, { name: F.name.trim(), phone: F.phone.trim(), item: F.item.trim(), total, due: F.due || '' }));
+        toast('Vente modifiée.');
+        return;
+      }
+      const n = { id: newId(), name: F.name.trim(), phone: F.phone.trim(), item: F.item.trim(), total, due: F.due || '', date: t,
+        createdAt: new Date().toISOString() + Math.random(), payments: paid > 0 ? [{ amt: paid, date: t, method: 'Espèces' }] : [] };
+      D.created += 1;
+      closeSheet();
+      if (V.tab !== 'sales') V.tab = 'sales';
+      V.filter = L.remaining(n) > 0 ? 'open' : 'paid'; V.q = '';
+      saveOrder(n);
+      askPersist();
+      toast(L.remaining(n) > 0 ? 'Vente ajoutée. Reste ' + L.money(L.remaining(n)) + ' à encaisser.' : 'Vente ajoutée et déjà soldée.');
+    };
+    draw({});
+    const f = $('f-name'); if (f) f.focus();
+  }
+
+  function openProSheet(limitHit) {
+    const draw = (err) => {
+      const st = proState();
+      const owner = CFG.ownerPhone ? L.normPhone(CFG.ownerPhone) : '';
+      const plans = CFG.plans || [];
+      const plan = plans.find(p => p.m === V.plan) || plans[0] || { m: 1, price: 0 };
+      V.plan = plan.m;
+      const msg = 'Bonjour' + (CFG.ownerName ? ' ' + CFG.ownerName : '') + ', j’ai payé ' + L.money(plan.price) + ' pour ' + plan.m + ' mois de Carnet Boutique. Mon numéro client : ' + License.fmtClientId(D.cid) + '.';
+      const codeIn = h('input', { id: 'lic-code', class: 'code-input', type: 'text', autocomplete: 'off', autocapitalize: 'characters', placeholder: 'XXXX-XXXX-XXXX', maxlength: '16', 'aria-invalid': err ? 'true' : null, 'aria-describedby': err ? 'lic-code-err' : null });
+      const activate = () => {
+        const r = L.applyCode(D.lic, D.cid, codeIn.value, today());
+        if (!r.ok) {
+          draw(r.reason === 'used' ? 'Ce code a déjà été utilisé.' : r.reason === 'invalid' ? 'Ce code ne correspond pas à votre numéro client. Vérifiez qu’il n’y a pas d’erreur de frappe.' : 'Le code doit contenir 12 caractères (lettres et chiffres).');
+          const c = $('lic-code'); if (c) { c.value = codeIn.value; c.focus(); }
+          return;
+        }
+        D.lic = r.lic; save(); closeSheet(); render();
+        toast('Abonnement activé jusqu’au ' + L.fmtDate(r.until) + '.');
+      };
+      codeIn.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); activate(); } });
+      const sheet = h('div', { class: 'sheet', role: 'dialog', 'aria-label': 'Abonnement' },
+        h('h2', null, limitHit === true ? 'Vous avez utilisé vos ' + (CFG.freeSales || 15) + ' ventes gratuites' : st === 'pro' ? 'Prolonger l’abonnement' : 'Passer à Pro'),
+        h('p', null, limitHit === true ? 'Vos ventes restent visibles et vous pouvez encaisser les paiements. Pour en ajouter de nouvelles, activez l’abonnement.' : 'Ventes illimitées, clients, bilan et relances WhatsApp.'),
+        h('div', { class: 'list', role: 'radiogroup', 'aria-label': 'Durée' }, plans.map(p =>
+          h('label', { class: 'plan' },
+            h('input', { type: 'radio', name: 'plan', value: String(p.m), checked: p.m === V.plan, onchange: () => { V.plan = p.m; draw(''); } }),
+            h('span', { class: 'pn' }, p.m + (p.m > 1 ? ' mois' : ' mois') + (p.tag ? ' · ' + p.tag : '')),
+            h('span', { class: 'pp' }, L.money(p.price))))),
+        owner
+          ? h('ol', null,
+            h('li', null, 'Envoyez ' + L.money(plan.price) + ' par Mobile Money au ' + L.prettyPhone(CFG.ownerPhone) + (CFG.ownerName ? ' (' + CFG.ownerName + ')' : '') + '.'),
+            h('li', null, 'Touchez « J’ai payé » ci-dessous. Un message part avec votre numéro client.'),
+            h('li', null, 'Vous recevez un code. Collez-le dans la case, puis touchez « Activer ».'))
+          : h('p', null, 'Demandez votre code d’activation à la personne qui vous a donné le carnet, avec votre numéro client ci-dessous.'),
+        h('div', { class: 'kv' }, h('span', null, 'Votre numéro client'), h('span', { class: 'cid' }, License.fmtClientId(D.cid))),
+        owner ? h('a', { class: 'btn wa block', href: waLink(owner, msg), target: '_blank', rel: 'noopener' }, 'J’ai payé : prévenir sur WhatsApp') : null,
+        h('div', { class: 'field' }, h('label', { for: 'lic-code' }, 'Code d’activation'), codeIn, err ? h('div', { class: 'err', id: 'lic-code-err' }, err) : null),
+        h('div', { class: 'actions' },
+          h('button', { class: 'btn primary', type: 'button', style: 'flex:1', onclick: activate }, 'Activer'),
+          h('button', { class: 'btn', type: 'button', onclick: closeSheet }, 'Fermer')));
+      openSheet(sheet);
+    };
+    draw('');
+  }
+
+  function openFeedbackSheet() {
+    const price = ((CFG.plans || [])[0] || { price: 1500 }).price;
+    const Q = { easy: '', weekly: '', pay: '', missing: '', name: '' };
+    const OPT = {
+      easy: ['Oui, très facile', 'Moyen', 'Difficile'],
+      weekly: ['Oui', 'Peut-être', 'Non'],
+      pay: ['Oui, ' + L.money(price) + ' par mois', 'Oui, mais moins cher', 'Non']
+    };
+    const owner = CFG.ownerPhone ? L.normPhone(CFG.ownerPhone) : '';
+    const build = () => {
+      const lines = ['Avis sur Carnet Boutique (version test)'];
+      if (Q.easy) lines.push('Facile à utiliser : ' + Q.easy);
+      if (Q.weekly) lines.push('Utilisation chaque semaine : ' + Q.weekly);
+      if (Q.pay) lines.push('Paiement : ' + Q.pay);
+      if (Q.missing.trim()) lines.push('Ce qui manque ou me gêne : ' + Q.missing.trim());
+      if (Q.name.trim()) lines.push('De la part de : ' + Q.name.trim());
+      lines.push('Ventes notées dans le carnet : ' + D.created);
+      return lines.join('\n');
+    };
+    const preview = h('textarea', { id: 'fb-preview', readonly: 'readonly', 'aria-label': 'Message qui sera envoyé' });
+    const link = h('a', { class: 'btn primary', style: 'flex:1', target: '_blank', rel: 'noopener', onclick: () => { D.settings.fbSent = today(); save(); render(); toast('Merci pour votre avis !'); } }, 'Envoyer sur WhatsApp');
+    const upd = () => {
+      const t = build();
+      preview.value = t;
+      link.href = owner ? waLink(owner, t) : 'https://wa.me/?text=' + encodeURIComponent(t);
+    };
+    const radios = (key, label) => h('div', { class: 'field', role: 'radiogroup', 'aria-label': label },
+      h('label', null, label),
+      OPT[key].map(o => h('label', { class: 'plan' },
+        h('input', { type: 'radio', name: 'fb-' + key, value: o, onchange: () => { Q[key] = o; upd(); } }),
+        h('span', { class: 'pn' }, o))));
+    const missing = h('textarea', { id: 'fb-missing', placeholder: 'Ex. je voudrais ajouter une photo, un stock, une facture…', oninput: e => { Q.missing = e.target.value; upd(); } });
+    const name = h('input', { id: 'fb-name', type: 'text', maxlength: '40', autocomplete: 'off', placeholder: 'Facultatif', oninput: e => { Q.name = e.target.value; upd(); } });
+    upd();
+    openSheet(h('div', { class: 'sheet', role: 'dialog', 'aria-label': 'Donner mon avis' },
+      h('h2', null, 'Votre avis compte'),
+      h('p', null, 'Répondez en 1 minute. Vous pourrez relire le message avant de l’envoyer.'),
+      radios('easy', 'Est-ce facile à utiliser ?'),
+      radios('weekly', 'L’utiliseriez-vous chaque semaine ?'),
+      radios('pay', 'Paieriez-vous pour l’avoir ?'),
+      h('div', { class: 'field' }, h('label', { for: 'fb-missing' }, 'Qu’est-ce qui manque ou vous gêne ?'), missing),
+      h('div', { class: 'field' }, h('label', { for: 'fb-name' }, 'Votre prénom'), name),
+      h('div', { class: 'field' }, h('label', { for: 'fb-preview' }, 'Message qui sera envoyé'), preview,
+        h('div', { class: 'hint' }, owner ? 'Il part directement vers la personne qui vous a donné le carnet.' : 'WhatsApp vous demandera à qui l’envoyer. Choisissez la personne qui vous a donné le carnet.')),
+      h('div', { class: 'actions' },
+        link,
+        h('button', { class: 'btn', type: 'button', onclick: () => copyText(build(), 'Message copié.') }, 'Copier'),
+        h('button', { class: 'btn ghost', type: 'button', onclick: closeSheet }, 'Fermer'))));
+  }
+
+  function openWelcome() {
+    const inp = h('input', { id: 'w-shop', type: 'text', maxlength: '60', placeholder: 'Ex. Atelier Mariam', value: D.settings.shop || '' });
+    const go1 = () => { D.settings.shop = inp.value.trim(); D.settings.welcomed = true; save(); closeSheet(); render(); };
+    inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); go1(); } });
+    openSheet(h('div', { class: 'sheet', role: 'dialog', 'aria-label': 'Bienvenue' },
+      h('h2', null, 'Bienvenue dans votre carnet'),
+      h('p', null, 'Notez vos ventes, voyez qui vous doit de l’argent et relancez en un clic sur WhatsApp. Tout reste sur votre téléphone.'),
+      CFG.test ? h('p', null, 'Ceci est la version test. Essayez-la quelques jours avec vos vraies ventes, puis touchez « Donner mon avis » en haut de l’écran.') : null,
+      h('div', { class: 'field' }, h('label', { for: 'w-shop' }, 'Nom de votre boutique ou de votre activité'), inp),
+      h('div', { class: 'actions' },
+        h('button', { class: 'btn primary', type: 'button', style: 'flex:1', onclick: go1 }, 'Commencer'),
+        h('button', { class: 'btn', type: 'button', onclick: () => { D.settings.shop = inp.value.trim(); closeSheet(); loadExamples(); } }, 'Voir un exemple'))));
+    setTimeout(() => inp.focus(), 50);
+  }
+
+  /* ---------- rendu principal ---------- */
+  function render() {
+    const app = $('app');
+    const view = V.tab === 'clients' ? viewClients() : V.tab === 'report' ? viewReport() : V.tab === 'settings' ? viewSettings() : viewSales();
+    const keepScroll = window.scrollY;
+    app.replaceChildren.apply(app, view.filter(Boolean));
+    window.scrollTo(0, keepScroll);
+    renderNav();
+  }
+
+  $('fab').addEventListener('click', () => openSaleSheet());
+  $('overlay').addEventListener('click', e => { if (e.target.id === 'overlay') closeSheet(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && V.sheet) closeSheet(); });
+  window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferredInstall = e; if (V.tab === 'settings') render(); });
+  window.addEventListener('appinstalled', () => { deferredInstall = null; if (V.tab === 'settings') render(); });
+  try {
+    if (CFG.offline && 'serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
+      navigator.serviceWorker.register('sw.js').catch(() => { /* hors ligne non disponible */ });
+    }
+  } catch (e) { /* ignoré */ }
+
+  load();
+  save();
+  render();
+  if (!D.settings.welcomed && !D.orders.length) openWelcome();
+})();
+</script>
+
+</body>
+</html>
